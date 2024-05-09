@@ -1,0 +1,89 @@
+// ==UserScript==
+// @name         Affectation personnel / Gyro et nouveau bouton
+// @namespace    www.operateur112.fr
+// @version      1.0
+// @description  Modification du bouton "Déployer" par un nouveau bouton sur Operateur112.fr + Gif Gyrophare pompiers qui remplace le logo opérateur112 / Ajoute un bouton d'affectation du personnel sur la page du bâtiment et sur la page du nouveau véhicule
+// @author       Lalain621
+// @match        https://www.operateur112.fr/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=leitstellenspiel.de     
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    function addButtonToNewVehiclesAlert() {
+    const buttonGroup = document.querySelector(
+      "div.alert.fade.in.alert-success > div.btn-group"
+    );
+
+    if (buttonGroup === null) {
+      return;
+    }
+
+    const vehicleUrl = buttonGroup.children[0].href;
+
+    const userIconSpan = document.createElement("span");
+    userIconSpan.className = "glyphicon glyphicon-user";
+
+    const button = document.createElement("a");
+    button.className = "btn btn-default";
+    button.href = vehicleUrl + "/zuweisung";
+    button.appendChild(userIconSpan);
+
+    buttonGroup.appendChild(button);
+  }
+
+  function addButtonToVehiclesOnBuildingPage() {
+    const vehicleEditButtons = document.querySelectorAll(
+      "a.btn.btn-default.btn-xs[href^='/vehicles/'][href$='/edit']"
+    );
+
+    vehicleEditButtons.forEach((vehicleEditButton) => {
+      const vehicleUrl = vehicleEditButton.href;
+      const vehicleId = vehicleUrl.split("/")[4];
+
+      const userIconSpan = document.createElement("span");
+      userIconSpan.className = "glyphicon glyphicon-user";
+
+      const button = document.createElement("a");
+      button.className = "btn btn-default btn-xs";
+      button.href = `/vehicles/${vehicleId}/zuweisung`;
+      button.appendChild(userIconSpan);
+
+      vehicleEditButton.parentElement.appendChild(button);
+    });
+  }
+
+  function main() {
+    addButtonToNewVehiclesAlert();
+    addButtonToVehiclesOnBuildingPage();
+  }
+
+  main();
+
+    // Sélectionner tous les boutons "Déployer" avec la classe "mission-alarm-button"
+    var alarmButtons = document.querySelectorAll('.mission-alarm-button');
+
+    // Parcourir tous les boutons sélectionnés
+    alarmButtons.forEach(function(button) {
+        // Modifier le texte et la classe du bouton
+        button.textContent = 'Envoyer les secours';
+        button.classList.remove('btn-default');
+        button.classList.add('btn-danger', 'btn-xs');
+        button.style.fontWeight = 'bold';
+
+        // Remplace le logo
+        var logoElement = document.querySelector('.logoSmall');
+
+
+    if (logoElement)
+
+        var newLogo = document.createElement('img');
+        newLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Blaulicht.gif/104px-Blaulicht.gif';
+        newLogo.className = 'logoSmall';
+
+
+        logoElement.parentNode.replaceChild(newLogo, logoElement);
+     });
+})();
